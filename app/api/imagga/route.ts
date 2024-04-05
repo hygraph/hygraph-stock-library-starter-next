@@ -57,7 +57,7 @@ async function getTagsFromImagga(url: string, fileName: string) {
     const resultJson = await response.json();
     console.log("getTagsFromImagga success")
 
-    return resultJson.result.tags
+    return resultJson.result?.tags || []
   }
   else {
     return []
