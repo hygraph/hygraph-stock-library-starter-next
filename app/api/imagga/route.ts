@@ -28,16 +28,7 @@ async function getAssetById(id: string) {
     `
     query Asset($id: ID!) {
       asset(where: { id: $id }) {
-        url(
-          transformation: {
-            image: {
-              resize: { width: 500, }
-              compress: { metadata: true }
-              quality: { value: 70 }
-            }
-            document: { output: { format: jpg } }
-          }
-        )
+        url
         fileName
         id
         tags
