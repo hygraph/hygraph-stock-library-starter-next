@@ -22,6 +22,8 @@ const client = new GraphQLClient(
 );
 
 async function getAssetById(id: string) {
+  console.log("getAssetById")
+
   const { asset }: Asset = await client.request(
     `
     query Asset($id: ID!) {
@@ -38,10 +40,14 @@ async function getAssetById(id: string) {
     }
   );
 
+  console.log("getAssetById success")
+
   return asset
 }
 
 async function getTagsFromImagga(url: string, fileName: string) {
+  console.log("getTagsFromImagga")
+
   if (fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".jpeg") || fileName.endsWith(".webp")) {
     const response = await fetch(`https://api.imagga.com/v2/tags?threshold=25&image_url=${url}`, {
       headers: {
@@ -49,6 +55,8 @@ async function getTagsFromImagga(url: string, fileName: string) {
       }
     })
     const resultJson = await response.json();
+    console.log("getTagsFromImagga success")
+
     return resultJson.result.tags
   }
   else {
@@ -57,6 +65,8 @@ async function getTagsFromImagga(url: string, fileName: string) {
 }
 
 async function applyImaggaTags(imaggaTags: string[], assetTags: string[], assetId: string) {
+  console.log("applyImaggaTags")
+
   let shouldMutate = false;
   const treshold = 70
 
@@ -79,13 +89,19 @@ async function applyImaggaTags(imaggaTags: string[], assetTags: string[], assetI
   `;
 
   if (shouldMutate) {
+    console.log("applyImaggaTags mutating")
+
     await client.request(mutation, { id: assetId, tags: assetTags });
   }
+
+  console.log("applyImaggaTags success")
 
   return "success"
 }
 
 async function updateTags(id: string) {
+  console.log("updateTags")
+
   const asset = await getAssetById(id)
   const tagsFromImagga = await getTagsFromImagga(asset.url, asset.fileName)
 
