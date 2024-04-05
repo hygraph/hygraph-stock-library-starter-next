@@ -13,6 +13,7 @@ type Asset = {
   mimeType: string;
   size: string;
   alt: string;
+  tags: string[];
   createdBy: {
     name: string;
     picture: string;
@@ -24,6 +25,7 @@ type Assets = {
 };
 
 async function getAssets() {
+  //@ts-ignore
   const client = new GraphQLClient(process.env.NEXT_HYGRAPH_ENDPOINT);
 
   const { assets }: Assets = await client.request(
@@ -49,6 +51,7 @@ async function getAssets() {
         mimeType
         size
         alt
+        tags
         createdBy {
           name
           picture
@@ -65,38 +68,65 @@ async function getAssets() {
 
 export default async function Home() {
   const assets = await getAssets();
+  const allTags: string[] = [];
+
+  assets.forEach((asset) => {
+    allTags.push(...asset.tags);
+  });
+
+  const tags = Array.from(new Set(allTags));
+
   return (
     <>
       <h1 className="text-4xl mb-2 font-bold">Hygraph stock library starter</h1>
-      <p className="mb-8">
-        All images here come from pexels.com and are royalty free.
-      </p>
-      <p className="flex space-x-2 mb-8">
-        <Link
-          href="https://app.hygraph.com/clone/6b3636b3c7914fe5904fd41e364bc1cf?name=Asset%20Management%20Workshop"
-          target="_blank"
-          className="block text-sm bg-slate-800 text-slate-100 py-2 px-4 rounded-md uppercase hover:bg-slate-600"
-        >
-          Clone the Hygraph project
-        </Link>
 
-        <Link
-          href="https://github.com/hygraph/hygraph-stock-library-starter-next"
-          target="_blank"
-          className="block text-sm bg-slate-800 text-slate-100 py-2 px-4 rounded-md uppercase hover:bg-slate-600"
-        >
-          Get the code for Next.js
-        </Link>
-        <Link
-          href="https://github.com/hygraph/hygraph-stock-library-starter-nuxt"
-          target="_blank"
-          className="block text-sm bg-slate-800 text-slate-100 py-2 px-4 rounded-md uppercase hover:bg-slate-600"
-        >
-          Get the code for NuxtJS
-        </Link>
-      </p>
+      <ul className="mb-8">
+        <li>
+          <Link
+            href="https://app.hygraph.com/clone/6b3636b3c7914fe5904fd41e364bc1cf?name=Asset%20Management%20Workshop"
+            target="_blank"
+            className="underline"
+          >
+            Clone the Hygraph project
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="https://github.com/hygraph/hygraph-stock-library-starter-next"
+            target="_blank"
+            className="underline"
+          >
+            Get the code for Next.js
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="https://github.com/hygraph/hygraph-stock-library-starter-nuxt"
+            target="_blank"
+            className="underline"
+          >
+            Get the code for NuxtJS
+          </Link>
+        </li>
+      </ul>
+
+      <ul className="flex flex-wrap">
+        {tags.map((tag) => {
+          return (
+            <li key={tag}>
+              <Link
+                href={`/tag/${tag.toLocaleLowerCase()}`}
+                className="block mr-1 mb-2 text-sm bg-slate-800 text-slate-100 py-2 px-4 rounded-md uppercase hover:bg-slate-600"
+              >
+                {tag}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
       <div className="grid grid-cols-4 gap-4">
         {assets.map((asset: Asset) => {
+          //@ts-ignore
           return <Card asset={asset} key={asset.id} />;
         })}
       </div>

@@ -17,6 +17,8 @@ type Asset = {
     mimeType: string;
     size: number;
     alt: string;
+    tags: string[];
+
     createdBy: {
       name: string;
       picture: string;
@@ -25,6 +27,7 @@ type Asset = {
 };
 
 async function getAsset(id: string) {
+  //@ts-ignore
   const client = new GraphQLClient(process.env.NEXT_HYGRAPH_ENDPOINT);
 
   const { asset }: Asset = await client.request(
@@ -51,6 +54,7 @@ async function getAsset(id: string) {
         mimeType
         size
         alt
+        tags
         createdBy {
           name
           picture
@@ -89,6 +93,20 @@ export default async function Asset({ params }: { params: { id: string } }) {
         <br />
         {dateString}
       </p>
+      <ul className="flex space-x-1 my-4">
+        {asset.tags.map((tag) => {
+          return (
+            <li key={tag}>
+              <Link
+                href={`/tag/${tag.toLocaleLowerCase()}`}
+                className="block mr-1 mb-2 text-sm bg-slate-800 text-slate-100 py-2 px-4 rounded-md uppercase hover:bg-slate-600"
+              >
+                {tag}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
 
       <div className="flex justify-between mb-4">
         <div className="flex space-x-2 items-center">
