@@ -39,10 +39,7 @@ async function getAssetsForTag(tag: [string]) {
           transformation: {
             image: {
               resize: { width: 300, height: 300, fit: crop }
-              compress: { metadata: true }
-              quality: { value: 90 }
             }
-            document: { output: { format: autoImage } }
           }
         )
         publishedAt

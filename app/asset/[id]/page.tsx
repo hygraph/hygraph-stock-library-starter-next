@@ -42,10 +42,7 @@ async function getAsset(id: string) {
           transformation: {
             image: {
               resize: { width: 1280 }
-              compress: { metadata: true }
-              quality: { value: 100 }
             }
-            document: { output: { format: autoImage } }
           }
         )
         publishedAt
